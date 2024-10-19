@@ -1,28 +1,47 @@
 import { useEffect, useState } from "react";
+import CardGrid from "./Components/CardGrid";
+import Scoreboard from "./Components/Scoreboard";
 
 function App() {
   const [cards, setCards] = useState([]);
+  const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
+  const [cardsClickedArray, setCardsClickedArray] = useState([]);
   const [turns, setTurns] = useState(0);
+  const [firstPick, setFirstPick] = useState(null);
+  const [secondPick, setSecondPick] = useState(null);
+
+  const WINNING_SCORE = 6;
 
   useEffect(() => {
     const fetchCards = async () => {
       try {
         const response = await fetch(
-          "https://thronesapi.com/api/v2/Characters"
+          `https://thronesapi.com/api/v2/Characters`
         );
         const data = await response.json();
         // console.log(data);
         const charactersNeeded = data.splice(0, 6);
-        console.log(charactersNeeded);
-        const gotCards = charactersNeeded.map((gotCard) => ({
-          name: gotCard.fullName,
-          image: gotCard.imageUrl,
-        }));
-        // const pokemonCards = data.results.map((pokemon) => ({
-        //   name: pokemon.name,
-        //   image: "https://pokeapi.co/api/v2/pokemon/1/",
-        // }));
+        // console.log(charactersNeeded);
+        const gotCards = charactersNeeded.flatMap((gotCard) => {
+          // console.log(gotCard);
+          return [
+            {
+              name: gotCard.fullName,
+              image: gotCard.imageUrl,
+              id: `${gotCard.id}-1`,
+              matched: false,
+            },
+            {
+              name: gotCard.fullName,
+              image: gotCard.imageUrl,
+              id: `${gotCard.id}-2`,
+              matched: false,
+            },
+          ];
+        });
         setCards(gotCards);
+        shuffleCards(gotCards);
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
@@ -30,47 +49,78 @@ function App() {
     fetchCards();
   }, []);
 
+  //Compare Cards
+  useEffect(() => {
+    if (firstPick && secondPick) {
+      checkMatch();
+    }
+  }, [firstPick, secondPick]);
+
   //Shuffle Cards
-  const shuffleCards = () => {
-    const shudffledCards = [...cards, ...cards]
-      .sort(() => Math.random() - 0.5)
-      .map((card) => ({ ...card, id: Math.random() }));
-    setCards(shudffledCards);
+  const shuffleCards = (cardsToShuffle) => {
+    const shuffledCards = [...cardsToShuffle].sort(() => Math.random() - 0.5);
+    setCards(shuffledCards);
     setTurns(0);
   };
 
-  console.log(cards, turns);
+  const handleChoice = (card) => {
+    // console.log(card);
+    firstPick ? setSecondPick(card) : setFirstPick(card);
+  };
+
+  const checkMatch = () => {
+    if (firstPick.name === secondPick.name) {
+      console.log("Cards Match!!");
+      setCards((prevCards) => {
+        return prevCards.map((card) => {
+          if (card.name === firstPick.name) {
+            return { ...card, matched: true };
+          }
+          return card;
+        });
+      });
+      setScore((prevScore) => prevScore + 1);
+      if (score + 1 === WINNING_SCORE) {
+        alert("Congratulations! You won the game!");
+        resetGame();
+      }
+      resetTurns();
+    } else {
+      console.log("Cards Don't Match!");
+      setTimeout(() => {
+        resetTurns();
+      }, 1000);
+    }
+  };
+
+  const resetTurns = () => {
+    setFirstPick(null);
+    setSecondPick(null);
+    setTurns((prevTurns) => prevTurns + 1);
+  };
+
+  const resetGame = () => {
+    setScore(0);
+    setCards((prevCards) => {
+      return prevCards.map((card) => ({ ...card, matched: false }));
+    });
+    shuffleCards(cards);
+    // setCardsClickedArray([]);
+  };
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center bg-gradient-to-tr from-blue-700 to-purple-900 ">
+    <div className="flex flex-col gap-4 justify-center items-center bg-gradient-to-tr from-blue-600 to-purple-700">
       <h1 className="text-4xl text-center font-bold text-white">
         Memory Game!
       </h1>
       <button
-        onClick={shuffleCards}
+        onClick={() => shuffleCards(cards)}
         className="text-white font-semibold p-3 bg-purple-900 hover:bg-purple-700 rounded-md"
       >
         New Game
       </button>
-
-      <div className="grid grid-cols-3 gap-4 justify-center items-center border-4 border-purple-300">
-        {cards.map((card) => (
-          <div key={card.name} className="card">
-            <div className="border-4 border-purple-700 cursor-pointer hover:scale-110">
-              <img
-                className="front w-full h-full p-2 rounded-lg"
-                src={card.image}
-                alt={"card-front"}
-              />
-              <img
-                className="back w-full h-full p-2 rounded-lg"
-                src={"/luke-chesser-eICUFSeirc0-unsplash.jpg"}
-                alt="card-back"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+      <Scoreboard score={score} bestScore={bestScore} />
+      <CardGrid cards={cards} onCardClick={handleChoice} flipped={false} />
     </div>
   );
 }
