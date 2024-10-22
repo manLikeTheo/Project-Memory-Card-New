@@ -2,23 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-.card {
+/* .card > div {
   position: relative;
-}
-.front {
-  transform: rotateY(90deg);
-  position: absolute;
-}
-
-.flipped .front {
-  transform: rotateY(0deg);
-}
-/* .card {
-  perspective: 1000px;
-}
-
-.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
   transform-style: preserve-3d;
+} */
+
+/* .card > div.flipped {
+  transform: rotateY(180deg);
+} */
+
+/* .card img.front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+} */
+
+/* .card img.back {
+  position: absolute;
+  width: 100%;
+  height: 100;
+  transform: rotate(180deg);
+  backface-visibility: hidden;
+} */
+
+/* .flipped .front {
+  transform: rotateY(0deg);
+} */
+
+.perspective {
+  perspective: 1000px; /* Adjust as needed */
 }
 
 .backface-hidden {
@@ -27,4 +43,4 @@
 
 .rotate-y-180 {
   transform: rotateY(180deg);
-} */
+}

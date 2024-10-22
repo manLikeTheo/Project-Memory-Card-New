@@ -40,8 +40,8 @@ function App() {
             },
           ];
         });
-        setCards(gotCards);
-        shuffleCards(gotCards);
+        setCards(shuffleCards(gotCards));
+        // shuffleCards(gotCards);
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
@@ -59,8 +59,9 @@ function App() {
   //Shuffle Cards
   const shuffleCards = (cardsToShuffle) => {
     const shuffledCards = [...cardsToShuffle].sort(() => Math.random() - 0.5);
-    setCards(shuffledCards);
-    setTurns(0);
+    // setCards(shuffledCards);
+    // setTurns(0);
+    return shuffledCards;
   };
 
   const handleChoice = (card) => {
@@ -96,7 +97,7 @@ function App() {
   const resetTurns = () => {
     setFirstPick(null);
     setSecondPick(null);
-    setTurns((prevTurns) => prevTurns + 1);
+    // setTurns((prevTurns) => prevTurns + 1);
   };
 
   const resetGame = () => {
@@ -104,7 +105,7 @@ function App() {
     setCards((prevCards) => {
       return prevCards.map((card) => ({ ...card, matched: false }));
     });
-    shuffleCards(cards);
+    setCards(shuffleCards(cards));
     // setCardsClickedArray([]);
   };
 
