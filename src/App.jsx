@@ -126,7 +126,7 @@ function App() {
   };
 
   return (
-    <main className="h-screen flex flex-col gap-4 justify-center items-center bg-gradient-to-tr from-purple-500 to-indigo-900">
+    <main className="h-screen flex flex-col gap-3 justify-center items-center bg-gradient-to-tr from-purple-500 to-indigo-900">
       <h1 className="text-4xl text-center font-bold text-white">
         Memory Game!
       </h1>
