@@ -125,7 +125,7 @@ function App() {
         Memory Game!
       </h1>
       <button
-        onClick={() => shuffleCards(cards)}
+        onClick={() => resetGame()}
         className="text-white font-semibold p-3 bg-purple-900 hover:bg-purple-700 rounded-md"
       >
         New Game
