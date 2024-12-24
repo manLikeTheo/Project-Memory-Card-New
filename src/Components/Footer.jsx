@@ -2,7 +2,7 @@ import React from "react";
 import { FaGithub } from "react-icons/fa";
 const Footer = () => {
   return (
-    <footer className="flex justify-center items-center gap-10 border-2 border-red-500 absolute bottom-1 py-2 w-full">
+    <footer className="flex justify-center items-center gap-10 border-t-2 border-gray-400 absolute bottom-1 py-2 w-full">
       <p className="text-lg font-semibold text-white">
         Copyright &copy; {new Date().getFullYear()}
       </p>
