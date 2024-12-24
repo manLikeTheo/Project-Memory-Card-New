@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CardGrid from "./Components/CardGrid";
 import Scoreboard from "./Components/Scoreboard";
+import Footer from "./Components/Footer";
 
 function App() {
   const [cards, setCards] = useState([]);
@@ -88,6 +89,15 @@ function App() {
       resetTurns();
     } else {
       console.log("Cards Don't Match!");
+      setCards((prevCards) => {
+        return prevCards.map((card) => {
+          if (card.name === firstPick.name || card.name === secondPick.name) {
+            return { ...card, matched: false };
+          }
+          return card;
+        });
+      });
+      setScore((prevScore) => prevScore - 1);
       setTimeout(() => {
         resetTurns();
       }, 1000);
@@ -110,7 +120,7 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center bg-gradient-to-tr from-blue-600 to-purple-700">
+    <main className="h-screen flex flex-col gap-4 justify-center items-center bg-gradient-to-tr from-blue-600 to-purple-700">
       <h1 className="text-4xl text-center font-bold text-white">
         Memory Game!
       </h1>
@@ -122,7 +132,8 @@ function App() {
       </button>
       <Scoreboard score={score} bestScore={bestScore} />
       <CardGrid cards={cards} onCardClick={handleChoice} flipped={false} />
-    </div>
+      <Footer />
+    </main>
   );
 }
 
