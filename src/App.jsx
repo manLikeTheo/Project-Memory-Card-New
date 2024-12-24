@@ -13,6 +13,7 @@ function App() {
   const [secondPick, setSecondPick] = useState(null);
 
   const WINNING_SCORE = 6;
+  const MAX_TURNS = 12;
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -57,6 +58,11 @@ function App() {
     }
   }, [firstPick, secondPick]);
 
+  useEffect(() => {
+    if (score > bestScore) {
+      setBestScore(score);
+    }
+  }, [score, bestScore]);
   //Shuffle Cards
   const shuffleCards = (cardsToShuffle) => {
     const shuffledCards = [...cardsToShuffle].sort(() => Math.random() - 0.5);
@@ -71,8 +77,8 @@ function App() {
   };
 
   const checkMatch = () => {
-    if (firstPick.name === secondPick.name) {
-      console.log("Cards Match!!");
+    if (firstPick.name === secondPick.name && !firstPick.matched) {
+      // console.log("Cards Match!!");
       setCards((prevCards) => {
         return prevCards.map((card) => {
           if (card.name === firstPick.name) {
@@ -86,18 +92,8 @@ function App() {
         alert("Congratulations! You won the game!");
         resetGame();
       }
-      resetTurns();
     } else {
-      console.log("Cards Don't Match!");
-      setCards((prevCards) => {
-        return prevCards.map((card) => {
-          if (card.name === firstPick.name || card.name === secondPick.name) {
-            return { ...card, matched: false };
-          }
-          return card;
-        });
-      });
-      setScore((prevScore) => prevScore - 1);
+      // console.log("Cards Don't Match!");
       setTimeout(() => {
         resetTurns();
       }, 1000);
@@ -107,15 +103,25 @@ function App() {
   const resetTurns = () => {
     setFirstPick(null);
     setSecondPick(null);
-    // setTurns((prevTurns) => prevTurns + 1);
+    setTurns((prevTurns) => prevTurns + 1);
+    if (turns + 1 >= MAX_TURNS) {
+      alert("Game Over! You lost!");
+      resetGame();
+    }
   };
 
   const resetGame = () => {
     setScore(0);
-    setCards((prevCards) => {
-      return prevCards.map((card) => ({ ...card, matched: false }));
-    });
-    setCards(shuffleCards(cards));
+    setTurns(0);
+    setFirstPick(null);
+    setSecondPick(null);
+    setCards((prevCards) =>
+      shuffleCards(prevCards.map((card) => ({ ...card, matched: false })))
+    );
+    // setCards((prevCards) => {
+    //   return prevCards.map((card) => ({ ...card, matched: false }));
+    // });
+    // setCards(shuffleCards(cards));
     // setCardsClickedArray([]);
   };
 
